@@ -1,0 +1,143 @@
+{
+    "_comment": "DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PTERODACTYL PANEL - PTERODACTYL.IO",
+    "meta": {
+        "version": "PTDL_v2",
+        "update_url": null
+    },
+    "exported_at": "2023-11-10T16:17:05-06:00",
+    "name": "CS2",
+    "author": "busheezy@badservers.net",
+    "description": null,
+    "features": null,
+    "docker_images": {
+        "Platform": "ghcr.io\/badserversnet\/sniper-cs2-yolk:latest",
+        "SDK": "ghcr.io\/badserversnet\/sniper-sdk-cs2-yolk:latest"
+    },
+    "file_denylist": [],
+    "startup": ".\/game\/cs2.sh -dedicated +ip 0.0.0.0 -port {{SERVER_PORT}} +map {{MAP}} -maxplayers {{MAXPLAYERS}} +game_type {{GAME_TYPE}} +game_mode {{GAME_MODE}} +sv_game_mode_flags {{GAME_MODE_FLAGS}} +sv_skirmish_id {{SKIRMISH_ID}} +sv_password \"{{PASSWORD}}\" +sv_setsteamaccount {{GSLT}}  +host_workshop_map \"{{HOST_WORKSHOP_MAP}}\" +sv_logfile 1 -serverlogging",
+    "config": {
+        "files": "{}",
+        "startup": "{\r\n    \"done\": \"Connection to Steam servers successful\"\r\n}",
+        "logs": "{}",
+        "stop": "quit"
+    },
+    "scripts": {
+        "installation": {
+            "script": "#!\/bin\/bash\r\n# steamcmd Base Installation Script\r\n#\r\n# Server Files: \/mnt\/server\r\n\r\n## just in case someone removed the defaults.\r\nif [ \"${STEAM_USER}\" == \"\" ]; then\r\n    STEAM_USER=anonymous\r\n    STEAM_PASS=\"\"\r\n    STEAM_AUTH=\"\"\r\nfi\r\n\r\n## download and install steamcmd\r\ncd \/tmp\r\nmkdir -p \/mnt\/server\/steamcmd\r\ncurl -sSL -o steamcmd.tar.gz https:\/\/steamcdn-a.akamaihd.net\/client\/installer\/steamcmd_linux.tar.gz\r\ntar -xzvf steamcmd.tar.gz -C \/mnt\/server\/steamcmd\r\nmkdir -p \/mnt\/server\/steamapps # Fix steamcmd disk write error when this folder is missing\r\ncd \/mnt\/server\/steamcmd\r\n\r\n# SteamCMD fails otherwise for some reason, even running as root.\r\n# This is changed at the end of the install process anyways.\r\nchown -R root:root \/mnt\r\nexport HOME=\/mnt\/server\r\n\r\n## install game using steamcmd\r\n.\/steamcmd.sh +force_install_dir \/mnt\/server +login ${STEAM_USER} ${STEAM_PASS} ${STEAM_AUTH} +app_update ${APPID} ${EXTRA_FLAGS} +quit ## other flags may be needed depending on install. looking at you cs 1.6\r\n\r\n## set up 32 bit libraries\r\nmkdir -p \/mnt\/server\/.steam\/sdk32\r\ncp -v linux32\/steamclient.so ..\/.steam\/sdk32\/steamclient.so\r\n\r\n## set up 64 bit libraries\r\nmkdir -p \/mnt\/server\/.steam\/sdk64\r\ncp -v linux64\/steamclient.so ..\/.steam\/sdk64\/steamclient.so",
+            "container": "ghcr.io\/pterodactyl\/installers:debian",
+            "entrypoint": "bash"
+        }
+    },
+    "variables": [
+        {
+            "name": "Map",
+            "description": "The default map for the server.",
+            "env_variable": "MAP",
+            "default_value": "de_dust2",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string",
+            "field_type": "text"
+        },
+        {
+            "name": "App ID",
+            "description": "",
+            "env_variable": "APPID",
+            "default_value": "730",
+            "user_viewable": false,
+            "user_editable": false,
+            "rules": "required|integer",
+            "field_type": "text"
+        },
+        {
+            "name": "Max Players",
+            "description": "",
+            "env_variable": "MAXPLAYERS",
+            "default_value": "64",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|integer",
+            "field_type": "text"
+        },
+        {
+            "name": "Validate Install",
+            "description": "",
+            "env_variable": "VALIDATE",
+            "default_value": "0",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|integer",
+            "field_type": "text"
+        },
+        {
+            "name": "Game Type",
+            "description": "https:\/\/developer.valvesoftware.com\/wiki\/Counter-Strike:_Global_Offensive\/Game_Modes#Game_Type_and_Game_Mode",
+            "env_variable": "GAME_TYPE",
+            "default_value": "0",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|integer",
+            "field_type": "text"
+        },
+        {
+            "name": "Game Mode",
+            "description": "",
+            "env_variable": "GAME_MODE",
+            "default_value": "0",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|integer",
+            "field_type": "text"
+        },
+        {
+            "name": "Game Mode Flags",
+            "description": "",
+            "env_variable": "GAME_MODE_FLAGS",
+            "default_value": "0",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|integer",
+            "field_type": "text"
+        },
+        {
+            "name": "Skirmish ID",
+            "description": "",
+            "env_variable": "SKIRMISH_ID",
+            "default_value": "0",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|integer",
+            "field_type": "text"
+        },
+        {
+            "name": "PASSWORD",
+            "description": "",
+            "env_variable": "PASSWORD",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "string",
+            "field_type": "text"
+        },
+        {
+            "name": "GSLT",
+            "description": "",
+            "env_variable": "GSLT",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string|alpha_num|size:32",
+            "field_type": "text"
+        },
+        {
+            "name": "Workshop Map",
+            "description": "",
+            "env_variable": "HOST_WORKSHOP_MAP",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "string|nullable",
+            "field_type": "text"
+        }
+    ]
+}

@@ -1,0 +1,9 @@
+services:
+  egg:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ../.container:/mnt/server
+    environment:
+      SRCDS_APPID: 730
