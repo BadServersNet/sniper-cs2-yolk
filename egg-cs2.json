@@ -4,7 +4,7 @@
         "version": "PTDL_v2",
         "update_url": null
     },
-    "exported_at": "2023-11-10T16:17:05-06:00",
+    "exported_at": "2024-01-28T16:57:14-06:00",
     "name": "CS2",
     "author": "busheezy@badservers.net",
     "description": null,
@@ -14,7 +14,7 @@
         "SDK": "ghcr.io\/badserversnet\/sniper-sdk-cs2-yolk:latest"
     },
     "file_denylist": [],
-    "startup": ".\/game\/cs2.sh -dedicated +ip 0.0.0.0 -port {{SERVER_PORT}} +map {{MAP}} -maxplayers {{MAXPLAYERS}} +game_type {{GAME_TYPE}} +game_mode {{GAME_MODE}} +sv_game_mode_flags {{GAME_MODE_FLAGS}} +sv_skirmish_id {{SKIRMISH_ID}} +sv_password \"{{PASSWORD}}\" +sv_setsteamaccount {{GSLT}}  +host_workshop_map \"{{HOST_WORKSHOP_MAP}}\" +sv_logfile 1 -serverlogging",
+    "startup": ".\/game\/cs2.sh -dedicated +ip 0.0.0.0 -port {{SERVER_PORT}} +map {{MAP}} -maxplayers {{MAXPLAYERS}} +game_type {{GAME_TYPE}} +game_mode {{GAME_MODE}} +sv_game_mode_flags {{GAME_MODE_FLAGS}} +sv_skirmish_id {{SKIRMISH_ID}} +sv_password \"{{PASSWORD}}\" +sv_setsteamaccount {{GSLT}}  +host_workshop_collection {{HOST_WORKSHOP_COLLECTION}}",
     "config": {
         "files": "{}",
         "startup": "{\r\n    \"done\": \"Connection to Steam servers successful\"\r\n}",
@@ -53,17 +53,7 @@
             "name": "Max Players",
             "description": "",
             "env_variable": "MAXPLAYERS",
-            "default_value": "64",
-            "user_viewable": true,
-            "user_editable": true,
-            "rules": "required|integer",
-            "field_type": "text"
-        },
-        {
-            "name": "Validate Install",
-            "description": "",
-            "env_variable": "VALIDATE",
-            "default_value": "0",
+            "default_value": "16",
             "user_viewable": true,
             "user_editable": true,
             "rules": "required|integer",
@@ -116,7 +106,7 @@
             "default_value": "",
             "user_viewable": true,
             "user_editable": true,
-            "rules": "string",
+            "rules": "string|nullable",
             "field_type": "text"
         },
         {
@@ -130,9 +120,19 @@
             "field_type": "text"
         },
         {
-            "name": "Workshop Map",
+            "name": "Workshop Collection",
             "description": "",
-            "env_variable": "HOST_WORKSHOP_MAP",
+            "env_variable": "HOST_WORKSHOP_COLLECTION",
+            "default_value": "0",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "integer",
+            "field_type": "text"
+        },
+        {
+            "name": "Extra Flags",
+            "description": "",
+            "env_variable": "EXTRA_FLAGS",
             "default_value": "",
             "user_viewable": true,
             "user_editable": true,
