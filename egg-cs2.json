@@ -4,7 +4,7 @@
         "version": "PTDL_v2",
         "update_url": null
     },
-    "exported_at": "2024-01-28T16:57:14-06:00",
+    "exported_at": "2024-09-12T13:36:29-05:00",
     "name": "CS2",
     "author": "busheezy@badservers.net",
     "description": null,
@@ -14,7 +14,7 @@
         "SDK": "ghcr.io\/badserversnet\/sniper-sdk-cs2-yolk:latest"
     },
     "file_denylist": [],
-    "startup": ".\/game\/cs2.sh -dedicated +ip 0.0.0.0 -port {{SERVER_PORT}} +map {{MAP}} -maxplayers {{MAXPLAYERS}} +game_type {{GAME_TYPE}} +game_mode {{GAME_MODE}} +sv_game_mode_flags {{GAME_MODE_FLAGS}} +sv_skirmish_id {{SKIRMISH_ID}} +sv_password \"{{PASSWORD}}\" +sv_setsteamaccount {{GSLT}}  +host_workshop_collection {{HOST_WORKSHOP_COLLECTION}}",
+    "startup": ".\/game\/cs2.sh -dedicated +ip 0.0.0.0 -port {{SERVER_PORT}} +map {{MAP}} -maxplayers {{MAXPLAYERS}} +game_type {{GAME_TYPE}} +game_mode {{GAME_MODE}} +sv_game_mode_flags {{GAME_MODE_FLAGS}} +sv_skirmish_id {{SKIRMISH_ID}} +sv_password \"{{PASSWORD}}\" +sv_setsteamaccount \"{{GSLT}}\"  +host_workshop_collection {{HOST_WORKSHOP_COLLECTION}}",
     "config": {
         "files": "{}",
         "startup": "{\r\n    \"done\": \"Connection to Steam servers successful\"\r\n}",
@@ -23,7 +23,7 @@
     },
     "scripts": {
         "installation": {
-            "script": "#!\/bin\/bash\r\n# steamcmd Base Installation Script\r\n#\r\n# Server Files: \/mnt\/server\r\n\r\n## just in case someone removed the defaults.\r\nif [ \"${STEAM_USER}\" == \"\" ]; then\r\n    STEAM_USER=anonymous\r\n    STEAM_PASS=\"\"\r\n    STEAM_AUTH=\"\"\r\nfi\r\n\r\n## download and install steamcmd\r\ncd \/tmp\r\nmkdir -p \/mnt\/server\/steamcmd\r\ncurl -sSL -o steamcmd.tar.gz https:\/\/steamcdn-a.akamaihd.net\/client\/installer\/steamcmd_linux.tar.gz\r\ntar -xzvf steamcmd.tar.gz -C \/mnt\/server\/steamcmd\r\nmkdir -p \/mnt\/server\/steamapps # Fix steamcmd disk write error when this folder is missing\r\ncd \/mnt\/server\/steamcmd\r\n\r\n# SteamCMD fails otherwise for some reason, even running as root.\r\n# This is changed at the end of the install process anyways.\r\nchown -R root:root \/mnt\r\nexport HOME=\/mnt\/server\r\n\r\n## install game using steamcmd\r\n.\/steamcmd.sh +force_install_dir \/mnt\/server +login ${STEAM_USER} ${STEAM_PASS} ${STEAM_AUTH} +app_update ${APPID} ${EXTRA_FLAGS} +quit ## other flags may be needed depending on install. looking at you cs 1.6\r\n\r\n## set up 32 bit libraries\r\nmkdir -p \/mnt\/server\/.steam\/sdk32\r\ncp -v linux32\/steamclient.so ..\/.steam\/sdk32\/steamclient.so\r\n\r\n## set up 64 bit libraries\r\nmkdir -p \/mnt\/server\/.steam\/sdk64\r\ncp -v linux64\/steamclient.so ..\/.steam\/sdk64\/steamclient.so",
+            "script": "#!\/bin\/bash\r\n# steamcmd Base Installation Script\r\n#\r\n# Server Files: \/mnt\/server\r\n\r\n## just in case someone removed the defaults.\r\nif [ \"${STEAM_USER}\" == \"\" ]; then\r\n    STEAM_USER=anonymous\r\n    STEAM_PASS=\"\"\r\n    STEAM_AUTH=\"\"\r\nfi\r\n\r\n## download and install steamcmd\r\ncd \/tmp\r\nmkdir -p \/mnt\/server\/steamcmd\r\ncurl -sSL -o steamcmd.tar.gz https:\/\/steamcdn-a.akamaihd.net\/client\/installer\/steamcmd_linux.tar.gz\r\ntar -xzvf steamcmd.tar.gz -C \/mnt\/server\/steamcmd\r\nmkdir -p \/mnt\/server\/steamapps # Fix steamcmd disk write error when this folder is missing\r\ncd \/mnt\/server\/steamcmd\r\n\r\n# SteamCMD fails otherwise for some reason, even running as root.\r\n# This is changed at the end of the install process anyways.\r\nchown -R root:root \/mnt\r\nexport HOME=\/mnt\/server\r\n\r\n## install game using steamcmd\r\n.\/steamcmd.sh +force_install_dir \/mnt\/server +login ${STEAM_USER} ${STEAM_PASS} ${STEAM_AUTH} +app_update ${APPID} +@nClientDownloadEnableHTTP2PlatformLinux 0 +@fDownloadRateImprovementToAddAnotherConnection 1.0 ${EXTRA_FLAGS} +quit\r\n\r\n## set up 32 bit libraries\r\nmkdir -p \/mnt\/server\/.steam\/sdk32\r\ncp -v linux32\/steamclient.so ..\/.steam\/sdk32\/steamclient.so\r\n\r\n## set up 64 bit libraries\r\nmkdir -p \/mnt\/server\/.steam\/sdk64\r\ncp -v linux64\/steamclient.so ..\/.steam\/sdk64\/steamclient.so",
             "container": "ghcr.io\/pterodactyl\/installers:debian",
             "entrypoint": "bash"
         }
@@ -116,7 +116,7 @@
             "default_value": "",
             "user_viewable": true,
             "user_editable": true,
-            "rules": "required|string|alpha_num|size:32",
+            "rules": "string|alpha_num|size:32|nullable",
             "field_type": "text"
         },
         {
@@ -137,6 +137,16 @@
             "user_viewable": true,
             "user_editable": true,
             "rules": "string|nullable",
+            "field_type": "text"
+        },
+        {
+            "name": "VALIDATE",
+            "description": "",
+            "env_variable": "VALIDATE",
+            "default_value": "0",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string|max:20",
             "field_type": "text"
         }
     ]
