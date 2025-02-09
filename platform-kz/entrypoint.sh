@@ -14,6 +14,10 @@ initialize() {
   TZ=${TZ:-UTC}
   export TZ
 
+  if ! grep -q "auth sufficient pam_succeed_if.so user = container" /etc/pam.d/su; then
+    echo "auth sufficient pam_succeed_if.so user = container" | cat - /etc/pam.d/su > temp && mv temp /etc/pam.d/su
+  fi
+
   INTERNAL_IP=$(ip route get 1 | awk '{print $(NF-2);exit}')
 
   if [ $? -ne 0 ]; then
