@@ -55,7 +55,7 @@ update_game_server() {
   log "update_game_server" "Updating game server..."
 
   if [ "${AUTO_UPDATE}" == "1" ]; then
-    ./steamcmd/steamcmd.sh +force_install_dir /home/container +login anonymous +app_update 730 $([[ ${VALIDATE} -eq 0 ]] || printf %s "validate") +quit
+    su - container -c "./steamcmd/steamcmd.sh +force_install_dir /home/container +login anonymous +app_update 730 $([[ ${VALIDATE} -eq 0 ]] || printf %s "validate") +quit"
 
     if [ $? -ne 0 ]; then
       log "update_game_server" "Failed to update game server."
@@ -153,7 +153,7 @@ update_cs2kz() {
 run() {
   log "run" "Running server with command: $PARSED"
 
-  exec su - container -c "env ${PARSED}"
+  su - container -c "env ${PARSED}"
 }
 
 main() {
