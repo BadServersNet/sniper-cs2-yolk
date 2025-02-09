@@ -3,6 +3,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        CACHE_BUSTER: ${CACHE_BUSTER:-1}
     volumes:
       - ../.container:/home/container
     environment:

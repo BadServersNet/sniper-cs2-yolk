@@ -83,7 +83,7 @@ install_metamod() {
   log "install_metamod" "Latest master version found: $METAMOD_DOWNLOAD_URL"
   log "install_metamod" "Downloading $METAMOD_DOWNLOAD_URL to $CSGO_FOLDER ..."
 
-  curl -Lqs "$METAMOD_DOWNLOAD_URL" | sudo tar -xz -C "$CSGO_FOLDER"
+  curl -Lqs "$METAMOD_DOWNLOAD_URL" | tar -xz -C "$CSGO_FOLDER"
 
   if [ $? -ne 0 ]; then
     log "install_metamod" "Failed to download and extract Metamod."
@@ -95,7 +95,7 @@ install_metamod() {
   if grep -qF "metamod" "$GAMEINFO_PATH"; then
     log "install_metamod" "Metamod addon include already exists. Skipping."
   else
-    sudo sed -i "/Game_LowViolence/ a\\
+    sed -i "/Game_LowViolence/ a\\
 \t\t\tGame\tcsgo/addons/metamod\n" "$GAMEINFO_PATH"
     if [ $? -ne 0 ]; then
       log "install_metamod" "Failed to add Metamod addon include."
@@ -140,7 +140,7 @@ update_cs2kz() {
   log "update_cs2kz" "Downloading $(echo "$CS2KZ_LATEST_RELEASE" | jq -r ".assets[] | select(.name | endswith(\"${CS2KZ_FILE_NAME}\")) | .name")"
   log "update_cs2kz" "Downloading $(echo "$CS2KZ_LATEST_RELEASE" | jq -r ".assets[] | select(.name | endswith(\"${CS2KZ_FILE_NAME}\")) | .browser_download_url")"
 
-  curl -Lqs "$CS2KZ_DOWNLOAD_URL" | sudo tar -xz -C "$CSGO_FOLDER"
+  curl -Lqs "$CS2KZ_DOWNLOAD_URL" | tar -xz -C "$CSGO_FOLDER"
 
   if [ $? -ne 0 ]; then
     log "update_cs2kz" "Failed to download and extract CS2 KZ."
@@ -153,7 +153,7 @@ update_cs2kz() {
 run() {
   log "run" "Running server with command: $PARSED"
 
-  exec env ${PARSED}
+  exec su - container -c "env ${PARSED}"
 }
 
 main() {

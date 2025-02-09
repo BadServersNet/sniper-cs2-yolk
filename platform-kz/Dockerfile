@@ -8,10 +8,10 @@ RUN apt install -y iproute2 jq \
 
 RUN echo "container ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
-USER container
-ENV USER=container
-ENV HOME=/home/container
+USER root
 WORKDIR /home/container
+
+ARG CACHE_BUSTER=1
 
 COPY ./entrypoint.sh /entrypoint.sh
 CMD [ "/bin/bash", "/entrypoint.sh" ]
