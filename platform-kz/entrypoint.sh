@@ -57,7 +57,7 @@ update_game_server() {
   if [ "${AUTO_UPDATE}" == "1" ]; then
     log "update_game_server" "$(cat /etc/pam.d/su)"
     su - container -c "ls"
-    su - container -c "./steamcmd/steamcmd.sh +force_install_dir /home/container +login anonymous +app_update 730 $([[ ${VALIDATE} -eq 0 ]] || printf %s "validate") +quit"
+#    su - container -c "./steamcmd/steamcmd.sh +force_install_dir /home/container +login anonymous +app_update 730 $([[ ${VALIDATE} -eq 0 ]] || printf %s "validate") +quit"
 
     if [ $? -ne 0 ]; then
       log "update_game_server" "Failed to update game server."
