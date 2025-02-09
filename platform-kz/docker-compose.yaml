@@ -1,0 +1,26 @@
+services:
+  egg:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ../.container:/home/container
+    environment:
+      TZ: America/Chicago
+      SERVER_IP: 0.0.0.0
+      SERVER_PORT: 27016
+      SRCDS_MAP: de_dust2
+      SRCDS_MAXPLAYERS: 16
+      GAME_TYPE: 0
+      GAME_MODE: 1
+      GAME_MODE_FLAGS: 0
+      SKIRMISH_ID: 0
+      PASSWORD: ""
+      GSLT: ${GSLT}
+      FULL_INSTALL_KZ: 0
+      VALIDATE: 0
+      APPID: 730
+      AUTO_UPDATE: 1
+      STARTUP: "./game/cs2.sh -dedicated +ip {{SERVER_IP}} -port {{SERVER_PORT}} +map {{SRCDS_MAP}} -maxplayers {{SRCDS_MAXPLAYERS}} +game_type {{GAME_TYPE}} +game_mode {{GAME_MODE}} +sv_game_mode_flags {{GAME_MODE_FLAGS}} +sv_skirmish_id {{SKIRMISH_ID}} +sv_password {{PASSWORD}} +sv_setsteamaccount {{GSLT}}"
+    ports:
+      - "27016:27016/udp"

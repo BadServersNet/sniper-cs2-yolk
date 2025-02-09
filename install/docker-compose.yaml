@@ -6,4 +6,4 @@ services:
     volumes:
       - ../.container:/mnt/server
     environment:
-      SRCDS_APPID: 730
+      APPID: 730
