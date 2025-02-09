@@ -55,6 +55,7 @@ update_game_server() {
   log "update_game_server" "Updating game server..."
 
   if [ "${AUTO_UPDATE}" == "1" ]; then
+    log "update_game_server" "$(cat /etc/pam.d/su)"
     su - container -c "ls"
     su - container -c "./steamcmd/steamcmd.sh +force_install_dir /home/container +login anonymous +app_update 730 $([[ ${VALIDATE} -eq 0 ]] || printf %s "validate") +quit"
 
