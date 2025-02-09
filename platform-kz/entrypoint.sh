@@ -23,9 +23,6 @@ initialize() {
 
   export INTERNAL_IP
 
-  sed -i 's/#auth\s\+sufficient\s\+pam_rootok.so/auth sufficient pam_rootok.so/' /etc/pam.d/su
-  log "initialize" "Updated PAM configuration for root access."
-
   cd /home/container || exit 1
 
   log "initialize" "Initialization complete."
