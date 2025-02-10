@@ -13,5 +13,9 @@ WORKDIR /home/container
 
 ARG CACHE_BUSTER=1
 
+COPY ./setup.sh /setup.sh
 COPY ./entrypoint.sh /entrypoint.sh
-CMD [ "/bin/bash", "/entrypoint.sh" ]
+
+RUN chmod +x /setup.sh /entrypoint.sh
+
+CMD /setup.sh && su container -c /entrypoint.sh
