@@ -16,6 +16,6 @@ services:
       SKIRMISH_ID: 0
       PASSWORD: ""
       GSLT: ${GSLT}
-      STARTUP: "./game/cs2.sh -dedicated +ip {{SERVER_IP}} -port {{SERVER_PORT}} +map {{SRCDS_MAP}} -maxplayers {{SRCDS_MAXPLAYERS}} +game_type {{GAME_TYPE}} +game_mode {{GAME_MODE}} +sv_game_mode_flags {{GAME_MODE_FLAGS}} +sv_skirmish_id {{SKIRMISH_ID}} +sv_password {{PASSWORD}} +sv_setsteamaccount {{GSLT}}"
+      STARTUP: "/bin/bash ./game/cs2.sh -dedicated +ip {{SERVER_IP}} -port {{SERVER_PORT}} +map {{SRCDS_MAP}} -maxplayers {{SRCDS_MAXPLAYERS}} +game_type {{GAME_TYPE}} +game_mode {{GAME_MODE}} +sv_game_mode_flags {{GAME_MODE_FLAGS}} +sv_skirmish_id {{SKIRMISH_ID}} +sv_password {{PASSWORD}} +sv_setsteamaccount {{GSLT}}"
     ports:
       - "27016:27016/udp"
