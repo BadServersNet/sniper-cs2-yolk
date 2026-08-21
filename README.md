@@ -13,6 +13,10 @@ are saved under `/home/container/heaptrack` and therefore remain in the server
 volume after the process exits. Stop the server cleanly before downloading the
 `.zst` or `.gz` capture.
 
+The SDK sets CS2's `GAME_DEBUGGER` hook so Heaptrack starts the final
+`bin/linuxsteamrt64/cs2` process after the launcher configures its runtime
+environment. The Bash launcher itself is not profiled.
+
 Analyze a capture in the SDK container with:
 
 ```bash

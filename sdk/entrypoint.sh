@@ -43,7 +43,7 @@ PARSED=$(echo "${STARTUP}" | sed -e 's/{{/${/g' -e 's/}}/}/g' | eval echo "$(cat
 
 case "${MEMORY_PROFILER:-off}" in
   off | "") ;;
-  heaptrack) PARSED="cs2-memory-profile ${PARSED}" ;;
+  heaptrack) PARSED="GAME_DEBUGGER=cs2-memory-profile ${PARSED}" ;;
   *)
     echo "Unsupported memory profiler: ${MEMORY_PROFILER}" >&2
     exit 64
