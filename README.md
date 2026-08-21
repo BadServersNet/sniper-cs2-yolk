@@ -7,15 +7,16 @@ https://gitlab.steamos.cloud/steamrt/sniper/platform
 The SDK image includes `heaptrack`, `smem`, `pidstat`, `gdb`, `strace`,
 `pmap`, and ELF inspection tools. The platform image remains unchanged.
 
-Set the server image to **SDK** and set `MEMORY_PROFILER` to `heaptrack` to
-profile the CS2 launch. Leave it set to `off` for normal operation. Captures
-are saved under `/home/container/heaptrack` and therefore remain in the server
-volume after the process exits. Stop the server cleanly before downloading the
-`.zst` or `.gz` capture.
+Import `egg-cs2-profiler.json` as a separate Pterodactyl egg for a bounded
+profiling session. The normal `egg-cs2.json` continues to use `cs2.sh` and does
+not expose profiling controls. Captures are saved under
+`/home/container/heaptrack` and therefore remain in the server volume after the
+process exits. Stop the server cleanly before downloading the `.zst` or `.gz`
+capture.
 
-The SDK sets CS2's `GAME_DEBUGGER` hook so Heaptrack starts the final
-`bin/linuxsteamrt64/cs2` process after the launcher configures its runtime
-environment. The Bash launcher itself is not profiled.
+The profiling egg uses the SDK image, bypasses `cs2.sh`, configures the required
+Linux runtime environment directly, and starts Heaptrack against
+`game/bin/linuxsteamrt64/cs2`.
 
 Analyze a capture in the SDK container with:
 

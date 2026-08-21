@@ -5,16 +5,15 @@
     "update_url": null
   },
   "exported_at": "2026-07-17T12:59:29-05:00",
-  "name": "Counter-Strike 2",
+  "name": "Counter-Strike 2 Memory Profiler",
   "author": "busheezy@badservers.net",
-  "description": null,
+  "description": "Dedicated CS2 heap profiling egg. Runs the SDK image and starts heaptrack directly against the CS2 executable.",
   "features": [],
   "docker_images": {
-    "Platform": "ghcr.io\/badserversnet\/sniper-cs2-yolk:v1.5.1",
-    "SDK": "ghcr.io\/badserversnet\/sniper-sdk-cs2-yolk:v1.5.1"
+    "SDK Memory Profiler": "ghcr.io/badserversnet/sniper-sdk-cs2-yolk:v1.5.2"
   },
   "file_denylist": [],
-  "startup": "\/bin\/bash .\/game\/cs2.sh -dedicated +ip 0.0.0.0 -port {{SERVER_PORT}} +map {{MAP}} -maxplayers {{MAXPLAYERS}} +game_type {{GAME_TYPE}} +game_mode {{GAME_MODE}} +sv_game_mode_flags {{GAME_MODE_FLAGS}} +sv_skirmish_id {{SKIRMISH_ID}} +sv_password \"{{PASSWORD}}\" +sv_setsteamaccount \"{{GSLT}}\" -disable_workshop_command_filtering",
+  "startup": "/home/container/game/bin/linuxsteamrt64/cs2 -dedicated +ip 0.0.0.0 -port {{SERVER_PORT}} +map {{MAP}} -maxplayers {{MAXPLAYERS}} +game_type {{GAME_TYPE}} +game_mode {{GAME_MODE}} +sv_game_mode_flags {{GAME_MODE_FLAGS}} +sv_skirmish_id {{SKIRMISH_ID}} +sv_password \"{{PASSWORD}}\" +sv_setsteamaccount \"{{GSLT}}\" -disable_workshop_command_filtering",
   "config": {
     "files": "{}",
     "startup": "{\r\n    \"done\": \"Connection to Steam servers successful\"\r\n}",
@@ -23,8 +22,8 @@
   },
   "scripts": {
     "installation": {
-      "script": "#!\/bin\/bash\r\n# steamcmd Base Installation Script\r\n#\r\n# Server Files: \/mnt\/server\r\n\r\n## just in case someone removed the defaults.\r\nif [ \"${STEAM_USER}\" == \"\" ]; then\r\n    STEAM_USER=anonymous\r\n    STEAM_PASS=\"\"\r\n    STEAM_AUTH=\"\"\r\nfi\r\n\r\n## download and install steamcmd\r\ncd \/tmp\r\nmkdir -p \/mnt\/server\/steamcmd\r\ncurl -sSL -o steamcmd.tar.gz https:\/\/steamcdn-a.akamaihd.net\/client\/installer\/steamcmd_linux.tar.gz\r\ntar -xzvf steamcmd.tar.gz -C \/mnt\/server\/steamcmd\r\nmkdir -p \/mnt\/server\/steamapps # Fix steamcmd disk write error when this folder is missing\r\ncd \/mnt\/server\/steamcmd\r\n\r\n# SteamCMD fails otherwise for some reason, even running as root.\r\n# This is changed at the end of the install process anyways.\r\nchown -R root:root \/mnt\r\nexport HOME=\/mnt\/server\r\n\r\n## install game using steamcmd\r\n.\/steamcmd.sh +force_install_dir \/mnt\/server +login ${STEAM_USER} ${STEAM_PASS} ${STEAM_AUTH} +app_update ${APPID} +quit ## other flags may be needed depending on install. looking at you cs 1.6\r\n\r\n## set up 32 bit libraries\r\nmkdir -p \/mnt\/server\/.steam\/sdk32\r\ncp -v linux32\/steamclient.so ..\/.steam\/sdk32\/steamclient.so\r\n\r\n## set up 64 bit libraries\r\nmkdir -p \/mnt\/server\/.steam\/sdk64\r\ncp -v linux64\/steamclient.so ..\/.steam\/sdk64\/steamclient.so",
-      "container": "ghcr.io\/pterodactyl\/installers:debian",
+      "script": "#!/bin/bash\r\n# steamcmd Base Installation Script\r\n#\r\n# Server Files: /mnt/server\r\n\r\n## just in case someone removed the defaults.\r\nif [ \"${STEAM_USER}\" == \"\" ]; then\r\n    STEAM_USER=anonymous\r\n    STEAM_PASS=\"\"\r\n    STEAM_AUTH=\"\"\r\nfi\r\n\r\n## download and install steamcmd\r\ncd /tmp\r\nmkdir -p /mnt/server/steamcmd\r\ncurl -sSL -o steamcmd.tar.gz https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz\r\ntar -xzvf steamcmd.tar.gz -C /mnt/server/steamcmd\r\nmkdir -p /mnt/server/steamapps # Fix steamcmd disk write error when this folder is missing\r\ncd /mnt/server/steamcmd\r\n\r\n# SteamCMD fails otherwise for some reason, even running as root.\r\n# This is changed at the end of the install process anyways.\r\nchown -R root:root /mnt\r\nexport HOME=/mnt/server\r\n\r\n## install game using steamcmd\r\n./steamcmd.sh +force_install_dir /mnt/server +login ${STEAM_USER} ${STEAM_PASS} ${STEAM_AUTH} +app_update ${APPID} +quit ## other flags may be needed depending on install. looking at you cs 1.6\r\n\r\n## set up 32 bit libraries\r\nmkdir -p /mnt/server/.steam/sdk32\r\ncp -v linux32/steamclient.so ../.steam/sdk32/steamclient.so\r\n\r\n## set up 64 bit libraries\r\nmkdir -p /mnt/server/.steam/sdk64\r\ncp -v linux64/steamclient.so ../.steam/sdk64/steamclient.so",
+      "container": "ghcr.io/pterodactyl/installers:debian",
       "entrypoint": "bash"
     }
   },
@@ -61,7 +60,7 @@
     },
     {
       "name": "Game Type",
-      "description": "https:\/\/developer.valvesoftware.com\/wiki\/Counter-Strike:_Global_Offensive\/Game_Modes#Game_Type_and_Game_Mode",
+      "description": "https://developer.valvesoftware.com/wiki/Counter-Strike:_Global_Offensive/Game_Modes#Game_Type_and_Game_Mode",
       "env_variable": "GAME_TYPE",
       "default_value": "0",
       "user_viewable": true,
@@ -127,6 +126,16 @@
       "user_viewable": true,
       "user_editable": true,
       "rules": "required|string|max:20",
+      "field_type": "text"
+    },
+    {
+      "name": "Memory Profiler",
+      "description": "Runs heaptrack directly against CS2. Captures are saved in /home/container/heaptrack.",
+      "env_variable": "MEMORY_PROFILER",
+      "default_value": "heaptrack",
+      "user_viewable": false,
+      "user_editable": false,
+      "rules": "required|string|in:heaptrack",
       "field_type": "text"
     }
   ]
