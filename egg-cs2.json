@@ -10,8 +10,8 @@
   "description": null,
   "features": [],
   "docker_images": {
-    "Platform": "ghcr.io\/badserversnet\/sniper-cs2-yolk:latest",
-    "SDK": "ghcr.io\/badserversnet\/sniper-sdk-cs2-yolk:latest"
+    "Platform": "ghcr.io\/badserversnet\/sniper-cs2-yolk:v1.5.0",
+    "SDK": "ghcr.io\/badserversnet\/sniper-sdk-cs2-yolk:v1.5.0"
   },
   "file_denylist": [],
   "startup": "\/bin\/bash .\/game\/cs2.sh -dedicated +ip 0.0.0.0 -port {{SERVER_PORT}} +map {{MAP}} -maxplayers {{MAXPLAYERS}} +game_type {{GAME_TYPE}} +game_mode {{GAME_MODE}} +sv_game_mode_flags {{GAME_MODE_FLAGS}} +sv_skirmish_id {{SKIRMISH_ID}} +sv_password \"{{PASSWORD}}\" +sv_setsteamaccount \"{{GSLT}}\" -disable_workshop_command_filtering",
@@ -127,6 +127,16 @@
       "user_viewable": true,
       "user_editable": true,
       "rules": "required|string|max:20",
+      "field_type": "text"
+    },
+    {
+      "name": "Memory Profiler",
+      "description": "SDK image only. Set to heaptrack for a bounded profiling session; captures are saved in /home/container/heaptrack.",
+      "env_variable": "MEMORY_PROFILER",
+      "default_value": "off",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "required|string|in:off,heaptrack",
       "field_type": "text"
     }
   ]

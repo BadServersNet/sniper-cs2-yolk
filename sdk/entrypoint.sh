@@ -41,6 +41,15 @@ cd /home/container || exit 1
 # replacing the values.
 PARSED=$(echo "${STARTUP}" | sed -e 's/{{/${/g' -e 's/}}/}/g' | eval echo "$(cat -)")
 
+case "${MEMORY_PROFILER:-off}" in
+  off | "") ;;
+  heaptrack) PARSED="cs2-memory-profile ${PARSED}" ;;
+  *)
+    echo "Unsupported memory profiler: ${MEMORY_PROFILER}" >&2
+    exit 64
+    ;;
+esac
+
 ## just in case someone removed the defaults.
 if [ "${STEAM_USER}" == "" ]; then
   echo -e "steam user is not set.\n"
