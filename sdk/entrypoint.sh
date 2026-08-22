@@ -41,25 +41,6 @@ cd /home/container || exit 1
 # replacing the values.
 PARSED=$(echo "${STARTUP}" | sed -e 's/{{/${/g' -e 's/}}/}/g' | eval echo "$(cat -)")
 
-profile_cs2=0
-cs2_executable="/home/container/game/bin/linuxsteamrt64/cs2"
-
-case "${MEMORY_PROFILER:-off}" in
-  off | "") ;;
-  heaptrack)
-    if [[ "$PARSED" != "$cs2_executable" && "$PARSED" != "$cs2_executable "* ]]; then
-      echo "Heaptrack profiling requires the direct CS2 executable startup command." >&2
-      exit 64
-    fi
-
-    profile_cs2=1
-    ;;
-  *)
-    echo "Unsupported memory profiler: ${MEMORY_PROFILER}" >&2
-    exit 64
-    ;;
-esac
-
 ## just in case someone removed the defaults.
 if [ "${STEAM_USER}" == "" ]; then
   echo -e "steam user is not set.\n"
@@ -82,23 +63,6 @@ if [ -z ${AUTO_UPDATE} ] || [ "${AUTO_UPDATE}" == "1" ]; then
 
 else
   echo -e "Not updating game server as auto update was set to 0. Starting Server"
-fi
-
-if [ "$profile_cs2" -eq 1 ]; then
-  if [ ! -x "$cs2_executable" ]; then
-    echo "CS2 executable is missing or is not executable: ${cs2_executable}" >&2
-    exit 1
-  fi
-
-  export LD_LIBRARY_PATH="/home/container/game/bin/linuxsteamrt64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}"
-  export ENABLE_PATHMATCH=1
-  export SDL_VIDEO_DRIVER="${SDL_VIDEO_DRIVER:-x11}"
-
-  ulimit -n 65535
-  ulimit -Ss 2048
-
-  cd /home/container/game || exit 1
-  PARSED="cs2-memory-profile ${PARSED}"
 fi
 
 # Display the command we're running in the output, and then execute it with the env
