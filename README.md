@@ -23,4 +23,7 @@ memtracker reset
 The tracker can also write a report to `/tmp/memtracker-<pid>.txt` when the CS2
 process receives `SIGUSR1`. Its upstream configuration variables include
 `MEMTRACK_SAMPLE`, `MEMTRACK_CAPACITY`, `MEMTRACK_DUMP`, `MEMTRACK_FIFO`, and
-`MEMTRACK_CMD`.
+`MEMTRACK_CMD`. When `MEMTRACK_DUMP` is set, the entrypoint creates a daily
+directory and uses the server start time for the filename. For example,
+`/home/container/.memtracker/memtracker-logs.txt` becomes
+`/home/container/.memtracker/logs/2026-08-22/memtracker-10-30-00.txt`.

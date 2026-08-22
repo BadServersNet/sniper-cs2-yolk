@@ -1,9 +1,17 @@
 #!/bin/bash
 
-sleep 1
-
 TZ=${TZ:-UTC}
 export TZ
+
+if [ -n "${MEMTRACK_DUMP}" ]; then
+  SCRIPT_STARTED_AT=$(date +"%Y-%m-%d_%H-%M-%S")
+  MEMTRACK_DUMP_DIRECTORY="$(dirname "${MEMTRACK_DUMP}")/logs/${SCRIPT_STARTED_AT%%_*}"
+  mkdir -p "${MEMTRACK_DUMP_DIRECTORY}"
+  MEMTRACK_DUMP="${MEMTRACK_DUMP_DIRECTORY}/memtracker-${SCRIPT_STARTED_AT#*_}.txt"
+  export MEMTRACK_DUMP
+fi
+
+sleep 1
 
 INTERNAL_IP=$(ip route get 1 | awk '{print $(NF-2);exit}')
 export INTERNAL_IP
