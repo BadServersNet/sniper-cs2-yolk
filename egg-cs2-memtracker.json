@@ -10,7 +10,7 @@
   "description": "Dedicated CS2 memory-tracking egg using cs2-memtracker with the standard CS2 launcher and mod environment.",
   "features": [],
   "docker_images": {
-    "Memory Tracker": "ghcr.io\/badserversnet\/sniper-memtracker-cs2-yolk:v1.6.1"
+    "Memory Tracker": "ghcr.io\/badserversnet\/sniper-memtracker-cs2-yolk:latest"
   },
   "file_denylist": [],
   "startup": "\/bin\/bash .\/game\/cs2.sh -dedicated +ip 0.0.0.0 -port {{SERVER_PORT}} +map {{MAP}} -maxplayers {{MAXPLAYERS}} +game_type {{GAME_TYPE}} +game_mode {{GAME_MODE}} +sv_game_mode_flags {{GAME_MODE_FLAGS}} +sv_skirmish_id {{SKIRMISH_ID}} +sv_password \"{{PASSWORD}}\" +sv_setsteamaccount \"{{GSLT}}\" -disable_workshop_command_filtering",
