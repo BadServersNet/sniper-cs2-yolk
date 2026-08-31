@@ -38,10 +38,17 @@ cd /home/container || exit 1
 
 CONSOLE_LOG_DIRECTORY=${CONSOLE_LOG_DIRECTORY:-/home/container/.logs}
 mkdir -p "${CONSOLE_LOG_DIRECTORY}" || exit 1
-CONSOLE_LOG_PATH="${CONSOLE_LOG_DIRECTORY}/console-$(date '+%Y-%m-%d_%H-%M-%S').log"
-exec 3>&1 4>&2
-exec > >(tee -a "${CONSOLE_LOG_PATH}" >&3) 2> >(tee -a "${CONSOLE_LOG_PATH}" >&4)
-exec 3>&- 4>&-
+
+if [ -z "${CONSOLE_LOG_ACTIVE:-}" ]; then
+  CONSOLE_LOG_PATH="${CONSOLE_LOG_DIRECTORY}/console-$(date '+%Y-%m-%d_%H-%M-%S').log"
+  export CONSOLE_LOG_ACTIVE=1
+
+  if [ -t 0 ]; then
+    stty -echo
+  fi
+
+  exec script --quiet --return --flush --echo never --log-out "${CONSOLE_LOG_PATH}" --command "/bin/bash /entrypoint.sh"
+fi
 
 # Convert all of the "{{VARIABLE}}" parts of the command into the expected shell
 # variable format of "${VARIABLE}" before evaluating the string and automatically
