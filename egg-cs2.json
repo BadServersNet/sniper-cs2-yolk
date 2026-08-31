@@ -120,6 +120,16 @@
       "field_type": "text"
     },
     {
+      "name": "Console Log Directory",
+      "description": "The directory that receives timestamped stdout and stderr logs. Relative paths are resolved from the server root.",
+      "env_variable": "CONSOLE_LOG_DIRECTORY",
+      "default_value": ".logs",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "required|string|max:255",
+      "field_type": "text"
+    },
+    {
       "name": "VALIDATE",
       "description": "",
       "env_variable": "VALIDATE",
