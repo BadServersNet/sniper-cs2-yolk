@@ -1,0 +1,8 @@
+{
+  "recommendations": [
+    "mads-hartmann.bash-ide-vscode",
+    "foxundermoon.shell-format",
+    "github.vscode-github-actions",
+    "ms-azuretools.vscode-docker"
+  ]
+}
