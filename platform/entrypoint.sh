@@ -1,4 +1,5 @@
 #!/bin/bash
+set -Eeuo pipefail
 
 #
 # Copyright (c) 2021 Matthew Penner
@@ -42,7 +43,7 @@ cd /home/container || exit 1
 PARSED=$(echo "${STARTUP}" | sed -e 's/{{/${/g' -e 's/}}/}/g' | eval echo "$(cat -)")
 
 ## just in case someone removed the defaults.
-if [ "${STEAM_USER}" == "" ]; then
+if [ -z "${STEAM_USER:-}" ]; then
   echo -e "steam user is not set.\n"
   echo -e "Using anonymous user.\n"
   STEAM_USER=anonymous
@@ -53,10 +54,21 @@ else
 fi
 
 ## if auto_update is not set or to 1 update
-if [ -z ${AUTO_UPDATE} ] || [ "${AUTO_UPDATE}" == "1" ]; then
+if [ -z "${AUTO_UPDATE:-}" ] || [ "${AUTO_UPDATE}" == "1" ]; then
   # Update Source Server
-  if [ ! -z ${APPID} ]; then
-    ./steamcmd/steamcmd.sh +force_install_dir /home/container +login ${STEAM_USER} ${STEAM_PASS} ${STEAM_AUTH} +app_update ${APPID} $([[ ${VALIDATE} -eq 0 ]] || printf %s "validate") +quit
+  if [ -n "${APPID:-}" ]; then
+    steam_login=(+login "${STEAM_USER}" "${STEAM_PASS:-}" "${STEAM_AUTH:-}")
+    steam_update=(+app_update "${APPID}")
+
+    if [ "${VALIDATE:-0}" != "0" ]; then
+      steam_update+=(validate)
+    fi
+
+    ./steamcmd/steamcmd.sh \
+      +force_install_dir /home/container \
+      "${steam_login[@]}" \
+      "${steam_update[@]}" \
+      +quit
   else
     echo -e "No appid set. Starting Server"
   fi
