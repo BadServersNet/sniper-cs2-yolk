@@ -30,8 +30,7 @@ def main() -> None:
         print(f"Invalid startup command: {error}", file=sys.stderr)
         sys.exit(1)
 
-    command = shlex.join(arguments)
-    print(f"container@pterodactyl~ {command}", flush=True)
+    print("container@pterodactyl~ Starting server.", flush=True)
     os.execvp("env", ["env", *arguments])
 
 
