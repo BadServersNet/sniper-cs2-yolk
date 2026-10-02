@@ -72,4 +72,107 @@ else
   echo -e "Not updating game server as auto update was set to 0. Starting Server"
 fi
 
+GAMEINFO_PATH="/home/container/game/csgo/gameinfo.gi"
+GAMEINFO_ANCHOR="Game_LowViolence"
+
+is_enabled() {
+  local value="${1,,}"
+
+  [[ "${value}" == "1" || "${value}" == "true" ]]
+}
+
+write_patched_gameinfo() {
+  local patch_metamod="$1"
+  local patch_swiftlys2="$2"
+  local output_path="$3"
+
+  awk \
+    -v anchor="${GAMEINFO_ANCHOR}" \
+    -v patch_metamod="${patch_metamod}" \
+    -v patch_swiftlys2="${patch_swiftlys2}" '
+      function is_managed(line) {
+        return line ~ /^[[:space:]]*Game[[:space:]]+(csgo\/)?addons\/(metamod|swiftlys2)[[:space:]]*$/
+      }
+
+      function is_blank(line) {
+        return line ~ /^[[:space:]]*$/
+      }
+
+      trimming && (is_blank($0) || is_managed($0)) {
+        if (is_blank($0)) {
+          saw_blank = 1
+        }
+        next
+      }
+
+      trimming {
+        trimming = 0
+        if (saw_blank) {
+          print eol
+        }
+      }
+
+      is_managed($0) {
+        next
+      }
+
+      {
+        print
+      }
+
+      !inserted && index($0, anchor) {
+        eol = /\r$/ ? "\r" : ""
+        if (patch_metamod) {
+          print "\t\t\tGame\tcsgo/addons/metamod" eol
+        }
+        if (patch_swiftlys2) {
+          print "\t\t\tGame\tcsgo/addons/swiftlys2" eol
+        }
+        inserted = 1
+        trimming = 1
+      }
+    ' "${GAMEINFO_PATH}" >"${output_path}"
+}
+
+patch_gameinfo() {
+  local patch_metamod=0
+  local patch_swiftlys2=0
+  local patched_path="${GAMEINFO_PATH}.patched"
+
+  if is_enabled "${PATCH_GAMEINFO_METAMOD:-0}"; then
+    patch_metamod=1
+  fi
+
+  if is_enabled "${PATCH_GAMEINFO_SWIFTLYS2:-0}"; then
+    patch_swiftlys2=1
+  fi
+
+  if [[ "${patch_metamod}" == "0" && "${patch_swiftlys2}" == "0" ]]; then
+    return 0
+  fi
+
+  if [[ ! -f "${GAMEINFO_PATH}" ]]; then
+    echo "gameinfo.gi was not found at ${GAMEINFO_PATH}; skipping gameinfo patch."
+    return 0
+  fi
+
+  if ! grep -qF "${GAMEINFO_ANCHOR}" "${GAMEINFO_PATH}"; then
+    echo "gameinfo.gi has no ${GAMEINFO_ANCHOR} line; skipping gameinfo patch."
+    return 0
+  fi
+
+  write_patched_gameinfo "${patch_metamod}" "${patch_swiftlys2}" "${patched_path}"
+
+  if cmp -s "${GAMEINFO_PATH}" "${patched_path}"; then
+    rm -f -- "${patched_path}"
+    echo "gameinfo.gi is already patched (metamod=${patch_metamod}, swiftlys2=${patch_swiftlys2})."
+    return 0
+  fi
+
+  mv -- "${patched_path}" "${GAMEINFO_PATH}"
+  echo "Patched gameinfo.gi (metamod=${patch_metamod}, swiftlys2=${patch_swiftlys2})."
+}
+
+patch_gameinfo
+
 exec python3 /startup.py

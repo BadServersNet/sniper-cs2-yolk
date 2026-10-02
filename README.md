@@ -15,3 +15,16 @@ even when `PASSWORD` is empty. Quote literal multiword arguments such as
 `+hostname "BadServers.net | FFA"`. Shell operators and command substitution are
 not evaluated by the launcher; commands needing shell logic must explicitly
 invoke a shell script.
+
+## Gameinfo patching
+
+`PATCH_GAMEINFO_METAMOD` and `PATCH_GAMEINFO_SWIFTLYS2` (default `0`) add
+`Game csgo/addons/metamod` and `Game csgo/addons/swiftlys2` after the
+`Game_LowViolence` line of `game/csgo/gameinfo.gi` on every startup, after the
+SteamCMD update. Metamod is always placed before SwiftlyS2. They only patch
+`gameinfo.gi`; they do not install Metamod or SwiftlyS2.
+
+When either is enabled, the patch removes existing Metamod and SwiftlyS2 entries
+and extra blank lines below the anchor before inserting the enabled entries, so
+repeated startups leave the file unchanged. When both are disabled,
+`gameinfo.gi` is not modified.
