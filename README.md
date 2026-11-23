@@ -28,3 +28,16 @@ When either is enabled, the patch removes existing Metamod and SwiftlyS2 entries
 and extra blank lines below the anchor before inserting the enabled entries, so
 repeated startups leave the file unchanged. When both are disabled,
 `gameinfo.gi` is not modified.
+
+## Steam client libraries
+
+Both runtime variants recreate `.steam/sdk32/steamclient.so` and
+`.steam/sdk64/steamclient.so` as links to SteamCMD's corresponding libraries
+before launching CS2. This runs after updates and also when `AUTO_UPDATE=0`,
+so startup repairs missing SDK links after a server wipe and uses the current
+SteamCMD libraries. Missing or empty SteamCMD libraries fail startup with their
+source path rather than launching CS2 into a Steamworks initialization failure.
+
+The installation script also copies these libraries, but runtime startup must
+not depend on those copies surviving or on the installation script having
+completed after the game files were downloaded.

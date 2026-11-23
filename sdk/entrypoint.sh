@@ -72,6 +72,19 @@ else
   echo -e "Not updating game server as auto update was set to 0. Starting Server"
 fi
 
+for steam_sdk_arch in 32 64; do
+  steam_client_path="/home/container/steamcmd/linux${steam_sdk_arch}/steamclient.so"
+  steam_sdk_directory="/home/container/.steam/sdk${steam_sdk_arch}"
+
+  if [[ ! -s "${steam_client_path}" ]]; then
+    echo "Steam client library was not found at ${steam_client_path}." >&2
+    exit 1
+  fi
+
+  mkdir -p -- "${steam_sdk_directory}"
+  ln -sfn -- "${steam_client_path}" "${steam_sdk_directory}/steamclient.so"
+done
+
 GAMEINFO_PATH="/home/container/game/csgo/gameinfo.gi"
 GAMEINFO_ANCHOR="Game_LowViolence"
 
